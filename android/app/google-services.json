@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "963667972498",
+    "project_id": "emeritmonitor",
+    "storage_bucket": "emeritmonitor.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:963667972498:android:dd46e7f1cec1f998ac314b",
+        "android_client_info": {
+          "package_name": "com.algorux.emmeritmonitor"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRetFHXDUmLaRZ2ccNFEmwlGgH1CbVpA0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:963667972498:android:78b5a08cad38f530ac314b",
+        "android_client_info": {
+          "package_name": "com.emeritcheck.web"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRetFHXDUmLaRZ2ccNFEmwlGgH1CbVpA0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
