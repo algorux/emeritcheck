@@ -12,32 +12,6 @@ import 'app_state.dart';
 import 'usuarios.dart';
 
 
-class MyApp extends StatelessWidget { 
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => MyAppState(),
-      child: MaterialApp(
-        title: 'Namer App',
-        theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
-        ),
-        home: const MyHomePage(),
-      ),
-    );
-  }
-}
-
-class MyAppState extends ChangeNotifier {
-  
-
-  
-}
-
-
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -80,8 +54,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       label: Text('Home'),
                     ),
                     NavigationRailDestination(
-                      icon: Icon(Icons.favorite),
-                      label: Text('Favorites'),
+                      icon: Icon(Icons.list),
+                      label: Text('Lista'),
                     ),
                     NavigationRailDestination(
                       icon: Icon(Icons.map), 
@@ -145,11 +119,33 @@ class MyMap extends StatelessWidget {
                   point: LatLng(usuario.gepos!.latitude, usuario.gepos!.longitude),
                   width: 80,
                   height: 80,
-                  child: Icon(
+                  child: GestureDetector(
+                    onTap: (){
+                      final fechaHora = DateTime.fromMillisecondsSinceEpoch(
+                        usuario.fechaReg.millisecondsSinceEpoch,
+                      );
+                      var fc = usuario.frecuenciaCardiaca.toString();
+                      if(usuario.frecuenciaCardiaca == 0){
+                        fc = "No se pudo tomar la frecuencia";
+                      }
+                      
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('FC: $fc  Hora: ${fechaHora.day}/${fechaHora.month}/${fechaHora.year} ${fechaHora.hour}:${fechaHora.minute.toString().padLeft(2, '0')}'
+                          ),
+                          duration: const Duration(seconds: 3),)
+                      );
+                    },
+                    child: Icon(
                     Icons.location_pin,
                     color: color,
                     size: 40,
                   ),
+                  )
+                  /*child: Icon(
+                    Icons.location_pin,
+                    color: color,
+                    size: 40,
+                  ),*/
                 );
                 } 
               )
