@@ -27,10 +27,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.macOS:
         return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -55,7 +52,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBRetFHXDUmLaRZ2ccNFEmwlGgH1CbVpA0',
-    appId: '1:963667972498:android:78b5a08cad38f530ac314b',
+    appId: '1:963667972498:android:ba5aee5c4d66be02ac314b',
     messagingSenderId: '963667972498',
     projectId: 'emeritmonitor',
     storageBucket: 'emeritmonitor.firebasestorage.app',
@@ -77,6 +74,16 @@ class DefaultFirebaseOptions {
     projectId: 'emeritmonitor',
     storageBucket: 'emeritmonitor.firebasestorage.app',
     iosBundleId: 'com.example.gtkFlutter',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyA5o4VRywQvHccyhOwGvKm2E-O2L5sDs14',
+    appId: '1:963667972498:web:93a33822b6ae91c6ac314b',
+    messagingSenderId: '963667972498',
+    projectId: 'emeritmonitor',
+    authDomain: 'emeritmonitor.firebaseapp.com',
+    storageBucket: 'emeritmonitor.firebasestorage.app',
+    measurementId: 'G-NL38YZP1BC',
   );
 
 }

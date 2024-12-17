@@ -7,6 +7,44 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:963667972498:android:ba5aee5c4d66be02ac314b",
+        "android_client_info": {
+          "package_name": "com.algorux.emeritcheck"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRetFHXDUmLaRZ2ccNFEmwlGgH1CbVpA0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:963667972498:android:b59bb734175a5383ac314b",
+        "android_client_info": {
+          "package_name": "com.algorux.emeritmonior"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRetFHXDUmLaRZ2ccNFEmwlGgH1CbVpA0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:963667972498:android:dd46e7f1cec1f998ac314b",
         "android_client_info": {
           "package_name": "com.algorux.emmeritmonitor"

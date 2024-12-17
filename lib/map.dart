@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 
 import 'app_state.dart';
 import 'usuarios.dart';
+import 'lista.dart';
 
 
 
@@ -28,13 +29,13 @@ class _MyHomePageState extends State<MyHomePage> {
     Widget pagina;
     switch (selectedIndex) {
       case 0:
-        pagina = const Placeholder();
+        pagina = PeopleTable(key: null,);
         
       case 1:
-        pagina = const Placeholder();
+        pagina = Lista();
         
       case 2:
-        pagina = ThisMap(messages: usuarios);
+        pagina = ThisMap(usuarios: usuarios);
         
       default:
         throw UnimplementedError('No hay widget para $selectedIndex');
@@ -141,15 +142,10 @@ class MyMap extends StatelessWidget {
                     size: 40,
                   ),
                   )
-                  /*child: Icon(
-                    Icons.location_pin,
-                    color: color,
-                    size: 40,
-                  ),*/
                 );
                 } 
               )
-              .toList(),
+              .toList().reversed.toList(),
         ),
         const RichAttributionWidget(
           attributions: [
@@ -162,9 +158,9 @@ class MyMap extends StatelessWidget {
 }
 
 class ThisMap extends StatefulWidget {
-  const ThisMap({super.key, required this.messages});
+  const ThisMap({super.key, required this.usuarios});
 
-  final List<Usuarios> messages;
+  final List<Usuarios> usuarios;
 
   @override
   State<ThisMap> createState() => _ThisMapState();
@@ -173,6 +169,6 @@ class ThisMap extends StatefulWidget {
 class _ThisMapState extends State<ThisMap> {
   @override
   Widget build(BuildContext context) {
-    return MyMap(usuarios: widget.messages);
+    return MyMap(usuarios: widget.usuarios);
   }
 }
