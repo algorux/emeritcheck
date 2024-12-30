@@ -5,11 +5,12 @@ class Permitido {
   final String nombre;
   final Timestamp? fecNac;
   final Timestamp? fecRegistro;
-  final Timestamp modificado;
-  final String modificador;
+  final Timestamp? modificado;
+  final String? modificador;
   final String apellidos;
   final String correo;
   final String id;
+  final dynamic agresor;
  
   
 
@@ -17,11 +18,12 @@ class Permitido {
     required this.nombre,
     this.fecNac,
     this.fecRegistro,
-    required this.modificador,
-    required this.modificado,
+    this.modificador,
+    this.modificado,
     required this.apellidos,
     required this.correo,
-    required this.id
+    required this.id,
+    this.agresor
     
     
   });
@@ -36,7 +38,8 @@ class Permitido {
       modificado: data['modificado'] as Timestamp? ?? Timestamp.now(),
       fecRegistro: data['fecRegistro'] as Timestamp?,
       modificador: data['modificador'],
-      id: data['id']
+      id: data['id'],
+      agresor: data['agresor'],
     );
   }
 }

@@ -52,7 +52,7 @@ class ApplicationState extends ChangeNotifier {
       // Obtener el ID del documento (revisor)
       var snap = querySnapshot.docs.first;
       revisorId = snap.id;
-      _revisor = AllowedReview(usuarioRevisor: snap.get('usuario_revisor'), rol: snap.get('rol'));
+      _revisor = AllowedReview(usuarioRevisor: snap.get('usuario_revisor'), rol: snap.get('rol'), revisorId: snap.id);
       
 
       
@@ -66,18 +66,21 @@ class ApplicationState extends ChangeNotifier {
       .snapshots()
       .listen((snapshot){
         if (snapshot.docs.isNotEmpty) {
+          // Limpiar la lista antes de agregar nuevos elementos
+          _permitidos = [];
 
           for (final document in snapshot.docs) {
             _permitidos.add(
               Permitido(
                 correo: document.data()['correo'] as String,
                 fecNac: document.data()['fecNac'] as Timestamp,
-                fecRegistro: document.data()['fecRegistro'] as Timestamp,
-                modificado: document.data()['modificado'] as Timestamp,
+                //fecRegistro: document.data()['fecRegistro'] as Timestamp,
+                //modificado: document.data()['modificado'] as Timestamp,
                 apellidos: document.data()['apellidos'] as String,
                 nombre: document.data()['nombre'] as String,
-                modificador: email,
-                id: document.id
+                //modificador: email,
+                id: document.id,
+                //agresor: document.data()['agresor'],
               ),
             );
         }

@@ -1,7 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:emeritcheck/agregar_usuario.dart';
+import 'package:emeritcheck/detalle_usuario.dart';
+import 'package:emeritcheck/map.dart';
 import 'package:emeritcheck/permitido.dart';
+import 'package:emeritcheck/revisores.dart';
 import 'package:flutter/material.dart';
 import 'package:emeritcheck/usuarios.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import 'app_state.dart';
@@ -52,8 +57,33 @@ class _PeopleTableState extends State<PeopleTable> {
     usersFiltered = users;
   }
 
+  void eliminarUsuario(String idUsuario, String? idRevisor, BuildContext context) async {
+    if (idRevisor == null || idRevisor == "") return;
+  try {
+    await FirebaseFirestore.instance
+        .collection('Revisores')
+        .doc(idRevisor)
+        .collection('personasRevisadas')
+        .doc(idUsuario)
+        .delete();
+
+    // ignore: use_build_context_synchronously
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Usuario eliminado correctamente')),
+    );
+  } catch (e) {
+    // ignore: use_build_context_synchronously
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error al eliminar el usuario')),
+    );
+  }
+}
+
+
+
   @override
   Widget build(BuildContext context) {
+    AllowedReview? revisado = context.watch<ApplicationState>().revisor;
     List<dynamic>? disponibles = context.watch<ApplicationState>().permitidos;
     users = [];
     
@@ -67,6 +97,7 @@ class _PeopleTableState extends State<PeopleTable> {
         nombre: disponible.nombre,
         fecNac: disponible.fecNac,
         id: disponible.id,
+        agresor: disponible.agresor,
         ));
     }
       
@@ -75,7 +106,7 @@ class _PeopleTableState extends State<PeopleTable> {
     usersFiltered = _searchResult.isEmpty
       ? users
       : users.where((user) => user.nombre.contains(_searchResult) || user.apellidos.contains(_searchResult)|| user.correo.contains(_searchResult)).toList();
-    
+    final dateFormat = DateFormat('dd/MM/yyyy'); // Formato deseado para la fecha
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -139,19 +170,34 @@ class _PeopleTableState extends State<PeopleTable> {
                     DataRow(
                       cells: <DataCell>[
                         DataCell(Text("${usersFiltered[index].nombre} ${usersFiltered[index].apellidos}")),
-                        DataCell(Text(DateTime.fromMicrosecondsSinceEpoch(usersFiltered[index].fecNac!.millisecondsSinceEpoch).toString())),
+                        DataCell(Text(
+                          dateFormat.format(
+                            DateTime.fromMillisecondsSinceEpoch(usersFiltered[index].fecNac!.millisecondsSinceEpoch)
+                            )
+                          )
+                        ),
                         DataCell(Text(usersFiltered[index].correo)),
                         DataCell(
                           Row(children: [
                               IconButton(icon: Icon(Icons.edit, color: Colors.blue[600],),onPressed: (){
-                                usersFiltered[index].id;
-                                
+
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => DetalleUsuario(revisorId: revisado.revisorId, idUsuario: usersFiltered[index].id),
+                                  ),
+                                );
                               }),
                               IconButton(icon: Icon(Icons.delete, color: Colors.red[400],), onPressed: (){
-                                
+                                eliminarUsuario(usersFiltered[index].id, revisado.revisorId, context);
                               }),
                               IconButton( icon: Icon(Icons.map, color: Colors.green[400],), onPressed: (){
-
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ThisMap(email: usersFiltered[index].correo),
+                                  ),
+                                );
                               })
                             ])
                           ),
@@ -161,6 +207,29 @@ class _PeopleTableState extends State<PeopleTable> {
               ),
             )
           ),
+          Column(
+          
+            children: [FloatingActionButton(
+            
+            onPressed: () {
+              
+              if(revisado.revisorId != null && revisado.rol == 'admin'){
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AgregarUsuario(revisorId: revisado.revisorId!),
+                ),
+              );
+              }
+            },
+            backgroundColor: Colors.blue[100],
+            hoverColor: Colors.blueAccent,
+            child: Icon(Icons.add),
+            
+          )],
+
+          )
+          
       ],
     );
   }

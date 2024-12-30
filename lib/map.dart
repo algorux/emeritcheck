@@ -1,14 +1,18 @@
 
 
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 // ignore: depend_on_referenced_packages
 import 'package:latlong2/latlong.dart';
-import 'package:provider/provider.dart';
 
 
 
-import 'app_state.dart';
+
+
 import 'usuarios.dart';
 import 'lista.dart';
 
@@ -25,7 +29,7 @@ class _MyHomePageState extends State<MyHomePage> {
   var selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
-    final usuarios = context.watch<ApplicationState>().usuarios;
+    //final usuarios = context.watch<ApplicationState>().usuarios;
     Widget pagina;
     switch (selectedIndex) {
       case 0:
@@ -34,8 +38,8 @@ class _MyHomePageState extends State<MyHomePage> {
       case 1:
         pagina = Lista();
         
-      case 2:
-        pagina = ThisMap(usuarios: usuarios);
+      //case 2:
+        //pagina = ThisMap(user.email);
         
       default:
         throw UnimplementedError('No hay widget para $selectedIndex');
@@ -58,16 +62,16 @@ class _MyHomePageState extends State<MyHomePage> {
                       icon: Icon(Icons.list),
                       label: Text('Lista'),
                     ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.map), 
-                      label: Text('Mapa')),
+                    //NavigationRailDestination(
+                    //  icon: Icon(Icons.map), 
+                    //  label: Text('Mapa')),
                   ],
                   selectedIndex: selectedIndex,
                   onDestinationSelected: (value) {
                     setState(() {
                       selectedIndex = value;
                     });
-                    //print('selected: $value');
+                    
                   },
                 ),
               ),
@@ -158,17 +162,67 @@ class MyMap extends StatelessWidget {
 }
 
 class ThisMap extends StatefulWidget {
-  const ThisMap({super.key, required this.usuarios});
-
-  final List<Usuarios> usuarios;
+  final String email; // Correo para filtrar los usuarios.
+  const ThisMap({super.key, required this.email});
 
   @override
   State<ThisMap> createState() => _ThisMapState();
+  
 }
 
 class _ThisMapState extends State<ThisMap> {
+  late StreamSubscription<QuerySnapshot> _userSubscription;
+  List<Usuarios> _usuarios = [];
   @override
   Widget build(BuildContext context) {
-    return MyMap(usuarios: widget.usuarios);
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Emerit Monitor'),
+      ),
+      body: MyMap(usuarios: _usuarios),
+    ); 
+    
+  }
+
+   @override
+  void initState() {
+    super.initState();
+    _subscribeToUsers(widget.email); // Inicia la suscripción al mapa.
+  }
+  @override
+  void didUpdateWidget(ThisMap oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.email != widget.email) {
+      // Si cambia el correo, actualiza la suscripción.
+      _userSubscription.cancel();
+      _subscribeToUsers(widget.email);
+    }
+  }
+  @override
+  void dispose() {
+    _userSubscription.cancel(); // Cancela la suscripción cuando se destruye el widget.
+    super.dispose();
+  }
+
+  void _subscribeToUsers(String email) {
+    _userSubscription = FirebaseFirestore.instance
+        .collection('Usuarios')
+        .where('email', isEqualTo: email)
+        .limit(50)
+        .orderBy('fecha_reg', descending: true)
+        .snapshots()
+        .listen((snapshot) {
+      setState(() {
+        _usuarios = snapshot.docs.map((doc) {
+          final data = doc.data();
+          return Usuarios(
+            email: data['email'] as String,
+            fechaReg: data['fecha_reg'] as Timestamp,
+            gepos: data['gepos'] as GeoPoint?,
+            frecuenciaCardiaca: (data['frecuencia_cardiaca'] as num).toInt(),
+          );
+        }).toList();
+      });
+    });
   }
 }
