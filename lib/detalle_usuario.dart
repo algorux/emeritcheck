@@ -18,6 +18,7 @@ class _DetalleUsuarioState extends State<DetalleUsuario> {
   late TextEditingController _apellidosController;
   late TextEditingController _correoController;
   late TextEditingController _modificadorController;
+  DateTime? _fechaNacimiento;
 
   bool _isLoading = true;
   Map<String, dynamic>? _data;
@@ -43,6 +44,8 @@ class _DetalleUsuarioState extends State<DetalleUsuario> {
         _apellidosController = TextEditingController(text: _data?['apellidos']);
         _correoController = TextEditingController(text: _data?['correo']);
         _modificadorController = TextEditingController(text: _data?['modificador']);
+        Timestamp tempStamp = _data?['fecNac'];
+        _fechaNacimiento = tempStamp.toDate();
       }
     } catch (e) {
       // Manejar errores si es necesario
@@ -67,6 +70,7 @@ class _DetalleUsuarioState extends State<DetalleUsuario> {
           'correo': _correoController.text,
           'modificador': _modificadorController.text,
           'modificado': FieldValue.serverTimestamp(),
+          'fecNac': _fechaNacimiento,
         });
 
         // ignore: use_build_context_synchronously
@@ -141,6 +145,35 @@ class _DetalleUsuarioState extends State<DetalleUsuario> {
                 controller: _modificadorController,
                 decoration: InputDecoration(labelText: 'Modificador'),
               ),
+              SizedBox(height: 16),
+                Text('Fecha de Nacimiento'),
+                SizedBox(height: 8),
+                Row(
+                  children: [
+                    Text(
+                      _fechaNacimiento != null
+                          ? '${_fechaNacimiento!.day}/${_fechaNacimiento!.month}/${_fechaNacimiento!.year}'
+                          : 'Seleccionar fecha',
+                    ),
+                    Spacer(),
+                    ElevatedButton(
+                      onPressed: () async {
+                        DateTime? selectedDate = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(1900),
+                          lastDate: DateTime.now(),
+                        );
+                        if (selectedDate != null) {
+                          setState(() {
+                            _fechaNacimiento = selectedDate;
+                          });
+                        }
+                      },
+                      child: Text('Seleccionar'),
+                    ),
+                  ],
+                ),
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _updateData,
