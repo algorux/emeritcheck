@@ -85,6 +85,7 @@ class _PeopleTableState extends State<PeopleTable> {
   Widget build(BuildContext context) {
     AllowedReview? revisado = context.watch<ApplicationState>().revisor;
     List<dynamic>? disponibles = context.watch<ApplicationState>().permitidos;
+    
     users = [];
     
     for (var disponible in disponibles) {
@@ -100,6 +101,9 @@ class _PeopleTableState extends State<PeopleTable> {
         agresor: disponible.agresor,
         ));
     }
+    
+
+    
       
     
     // Nos aseguramos de que usersFiltered esté sincronizado con users
@@ -116,7 +120,7 @@ class _PeopleTableState extends State<PeopleTable> {
             title: TextField(
                 controller: controller,
                 decoration: InputDecoration(
-                    hintText: 'Search', border: InputBorder.none),
+                    hintText: 'Buscar', border: InputBorder.none),
                 onChanged: (value) {
                   setState(() { 
                     _searchResult = value;
@@ -136,77 +140,95 @@ class _PeopleTableState extends State<PeopleTable> {
           ),
         ),
         Expanded(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: DataTable(
-                columns: const <DataColumn>[
-                  DataColumn(
-                    label: Text(
-                      'Nombre',
-                      style: TextStyle(fontStyle: FontStyle.italic),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'F. Nacimiento',
-                      style: TextStyle(fontStyle: FontStyle.italic),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Correo',
-                      style: TextStyle(fontStyle: FontStyle.italic),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Acciones',
-                      style: TextStyle(fontStyle: FontStyle.italic),
-                    ),
-                  ),
-                ],
-                
-                rows: List.generate(usersFiltered.length, (index) =>
-                    DataRow(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal, // Permite el desplazamiento horizontal
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minWidth: MediaQuery.of(context).size.width, // Ocupa al menos todo el ancho disponible
+                ),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical, // Permite el desplazamiento vertical
+                  child: DataTable(
+                    columns: const <DataColumn>[
+                      DataColumn(
+                        label: Text(
+                          'Nombre',
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          'F. Nacimiento',
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          'Correo',
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          'Acciones',
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                        ),
+                      ),
+                    ],
+                    rows: List.generate(usersFiltered.length, (index) => DataRow(
                       cells: <DataCell>[
                         DataCell(Text("${usersFiltered[index].nombre} ${usersFiltered[index].apellidos}")),
                         DataCell(Text(
                           dateFormat.format(
-                            DateTime.fromMillisecondsSinceEpoch(usersFiltered[index].fecNac!.millisecondsSinceEpoch)
-                            )
-                          )
-                        ),
+                            DateTime.fromMillisecondsSinceEpoch(usersFiltered[index].fecNac!.millisecondsSinceEpoch),
+                          ),
+                        )),
                         DataCell(Text(usersFiltered[index].correo)),
                         DataCell(
-                          Row(children: [
-                              IconButton(icon: Icon(Icons.edit, color: Colors.blue[600],),onPressed: (){
-
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => DetalleUsuario(revisorId: revisado.revisorId, idUsuario: usersFiltered[index].id),
-                                  ),
-                                );
-                              }),
-                              IconButton(icon: Icon(Icons.delete, color: Colors.red[400],), onPressed: (){
-                                eliminarUsuario(usersFiltered[index].id, revisado.revisorId, context);
-                              }),
-                              IconButton( icon: Icon(Icons.map, color: Colors.green[400],), onPressed: (){
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ThisMap(email: usersFiltered[index].correo),
-                                  ),
-                                );
-                              })
-                            ])
+                          Row(
+                            children: [
+                              IconButton(
+                                icon: Icon(Icons.edit, color: Colors.blue[600]),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => DetalleUsuario(
+                                        revisorId: revisado.revisorId,
+                                        idUsuario: usersFiltered[index].id,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.delete, color: Colors.red[400]),
+                                onPressed: () {
+                                  eliminarUsuario(usersFiltered[index].id, revisado.revisorId, context);
+                                },
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.map, color: Colors.green[400]),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ThisMap(email: usersFiltered[index].correo),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
                           ),
+                        ),
                       ],
-                    ),
+                    )),
+                  ),
                 ),
               ),
-            )
+            ),
           ),
+
           Column(
           
             children: [FloatingActionButton(

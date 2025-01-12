@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:emeritcheck/alertas.dart';
 import 'package:emeritcheck/permitido.dart';
 import 'package:firebase_auth/firebase_auth.dart'
     hide EmailAuthProvider, PhoneAuthProvider;
@@ -9,7 +10,7 @@ import 'package:flutter/material.dart';
 
 import 'revisores.dart';
 import 'firebase_options.dart';
-import 'usuarios.dart';
+//import 'usuarios.dart';
 
 class ApplicationState extends ChangeNotifier {
   ApplicationState() {
@@ -19,17 +20,21 @@ class ApplicationState extends ChangeNotifier {
   bool _loggedIn = false;
   bool get loggedIn => _loggedIn;
 
-  StreamSubscription<QuerySnapshot>? _guestBookSubscription;
-  List<Usuarios> _usuarios = [];
-  List<Usuarios> get usuarios => _usuarios;
-
   List<Permitido> _permitidos = [];
   List<Permitido> get permitidos => _permitidos;
 
+  //Filtro de personas revisadas
   StreamSubscription<QuerySnapshot>? _allowanceList;
   AllowedReview _revisor = AllowedReview(usuarioRevisor: '', rol: '');
   AllowedReview get revisor => _revisor;
   String? revisorId;
+
+  //Alertas recibidas
+  StreamSubscription<QuerySnapshot>? _alertasList;
+  List<Alertas> _alertas =[];
+  List<Alertas> get alertas => _alertas;
+  List<Alertas> _alertasAtendidas = [];
+  List<Alertas> get alertasAtenddas => _alertasAtendidas; 
 
   Future<void> init() async {
     await Firebase.initializeApp(
@@ -100,36 +105,47 @@ class ApplicationState extends ChangeNotifier {
         _loggedIn = true;
         fetchRevisorId(user.email!);
 
-        //suscripcion al "guestboot"
-        _guestBookSubscription = FirebaseFirestore.instance
-        .collection('Usuarios')
+
+        //suscripcion a las "alertas"
+        _alertasList = FirebaseFirestore.instance
+        .collection('Alertas')
           .where('email', isEqualTo: user.email)
-          //.where('gepos.latitude', isNotEqualTo: 0.0)
           .limit(50)
-          .orderBy('fecha_reg', descending: true)
+          .orderBy('fecha_hora', descending: true)
           .snapshots()
           .listen((snapshot) {
-        _usuarios = [];
+        _alertas = [];
         for (final document in snapshot.docs) {
-          int fc = (document.data()['frecuencia_cardiaca'] as num).toInt();
+          if(document.data()['atendida']){
+            _alertasAtendidas.add(
+              Alertas(
+                email: document.data()['email'] as String,
+                atendida: document.data()['atendida'] as bool,
+                fechaHora: document.data()['fecha_hora'] as Timestamp, 
+                ubicaciones: document.data()['ubicaciones']
+              ),
+            );
+          }
+          else{
+            _alertas.add(
+              Alertas(
+                email: document.data()['email'] as String,
+                atendida: document.data()['atendida'] as bool,
+                fechaHora: document.data()['fecha_hora'] as Timestamp, 
+                ubicaciones: document.data()['ubicaciones']
+              ),
+            );
+          }
           
-          _usuarios.add(
-            Usuarios(
-              email: document.data()['email'] as String,
-              fechaReg: document.data()['fecha_reg'] as Timestamp,
-              gepos: document.data()['gepos'] as GeoPoint?,
-              frecuenciaCardiaca: fc
-            ),
-          );
         }
         notifyListeners();
         });
       } else {
         _loggedIn = false;
-        _usuarios = [];
-        _guestBookSubscription?.cancel();
+        _alertas = [];
+        _alertasAtendidas = [];
+        _alertasList?.cancel();
         _permitidos = [];
-
         _revisor = AllowedReview(usuarioRevisor: '', rol: '');
         _allowanceList?.cancel();
       }

@@ -3,16 +3,14 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:emeritcheck/alertas.dart';
+import 'package:emeritcheck/app_state.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 // ignore: depend_on_referenced_packages
 import 'package:latlong2/latlong.dart';
-
-
-
-
-
+import 'package:provider/provider.dart';
 import 'usuarios.dart';
 import 'lista.dart';
 
@@ -27,8 +25,17 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   var selectedIndex = 0;
+  
   @override
   Widget build(BuildContext context) {
+    List<Alertas>? alertas = context.watch<ApplicationState>().alertas;
+    // Mostrar el popup solo si hay alertas no atendidas
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (alertas.isNotEmpty) {
+        _mostrarPopup(context, alertas.first);
+      }
+    });
+    //List<Alertas>? alertasAtendidas = context.watch<ApplicationState>().alertasAtenddas;
     //final usuarios = context.watch<ApplicationState>().usuarios;
     Widget pagina;
     switch (selectedIndex) {
@@ -60,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     NavigationRailDestination(
                       icon: Icon(Icons.list),
-                      label: Text('Lista'),
+                      label: Text('Alertas'),
                     ),
                     //NavigationRailDestination(
                     //  icon: Icon(Icons.map), 
@@ -87,6 +94,47 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     );
   }
+
+  void _mostrarPopup(BuildContext context, Alertas alerta) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: Text('¡Nueva Alerta!'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Correo: ${alerta.email}'),
+            //if (alerta.fechaHora != null)
+              //Text(
+                //'Fecha: ${DateFormat('dd/MM/yyyy HH:mm').format(
+                //  alerta.fechaHora!.toDate(),
+                //)}',
+              //),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Cierra el popup
+            },
+            child: Text('Cerrar'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Cierra el popup
+              setState(() {
+                selectedIndex = 1; // Cambia a la página de alertas
+                //pagina = AlertasPage(); // Cambia a la página de alertas
+              });
+            },
+            child: Text('Ver Alertas'),
+          ),
+        ],
+      );
+    },
+  );
+}
 }
 
 
