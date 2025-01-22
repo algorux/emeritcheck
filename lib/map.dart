@@ -31,8 +31,9 @@ class _MyHomePageState extends State<MyHomePage> {
     List<Alertas>? alertas = context.watch<ApplicationState>().alertas;
     // Mostrar el popup solo si hay alertas no atendidas
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (alertas.isNotEmpty) {
+      if (alertas.isNotEmpty && !alertas.first.mostrada) {
         _mostrarPopup(context, alertas.first);
+        alertas.first.mostrada= true;
       }
     });
     //List<Alertas>? alertasAtendidas = context.watch<ApplicationState>().alertasAtenddas;

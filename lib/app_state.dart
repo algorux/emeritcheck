@@ -109,7 +109,7 @@ class ApplicationState extends ChangeNotifier {
         //suscripcion a las "alertas"
         _alertasList = FirebaseFirestore.instance
         .collection('Alertas')
-          .where('email', isEqualTo: user.email)
+          //.where('email', isEqualTo: user.email)
           .limit(50)
           .orderBy('fecha_hora', descending: true)
           .snapshots()

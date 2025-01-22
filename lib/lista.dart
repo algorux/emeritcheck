@@ -3,6 +3,7 @@ import 'package:emeritcheck/agregar_usuario.dart';
 import 'package:emeritcheck/detalle_usuario.dart';
 import 'package:emeritcheck/map.dart';
 import 'package:emeritcheck/permitido.dart';
+import 'package:emeritcheck/point_map.dart';
 import 'package:emeritcheck/revisores.dart';
 import 'package:flutter/material.dart';
 import 'package:emeritcheck/usuarios.dart';
@@ -218,6 +219,14 @@ class _PeopleTableState extends State<PeopleTable> {
                                   );
                                 },
                               ),
+                              IconButton(icon: Icon(Icons.notification_important),onPressed: (){
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ThisPointMap(email: usersFiltered[index].correo),
+                                    ),
+                                  );
+                              })
                             ],
                           ),
                         ),

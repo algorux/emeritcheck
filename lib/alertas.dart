@@ -6,12 +6,14 @@ class Alertas {
   final String email;
   final Map<String,dynamic>? ubicaciones;
   final Timestamp? fechaHora;
+  bool mostrada;
 
   Alertas({
     required this.atendida,
     required this.email,
     required this.ubicaciones,
-    required this.fechaHora
+    required this.fechaHora,
+    this.mostrada = false,
   });
 
   // Constructor para mapear datos desde Firestore
