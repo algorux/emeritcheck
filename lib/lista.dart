@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emeritcheck/agregar_usuario.dart';
+import 'package:emeritcheck/alertas.dart';
 import 'package:emeritcheck/detalle_usuario.dart';
 import 'package:emeritcheck/map.dart';
 import 'package:emeritcheck/permitido.dart';
@@ -12,28 +13,18 @@ import 'package:provider/provider.dart';
 
 import 'app_state.dart';
 
-class Lista extends StatelessWidget{
-  final List<Usuarios> items = List<Usuarios>.generate(
-    50, (i) => Usuarios(email: '$i@hotmail.com', frecuenciaCardiaca: i+70, fechaReg: Timestamp(i, i*2)));
+class AlertasNoAtendidas extends StatefulWidget {
+  AlertasNoAtendidas({required super.key})
   @override
-  Widget build(Object context) {
-    
-    return ListView.builder(
-      itemCount: items.length,
-      itemBuilder: (BuildContext context, int index) { 
-        final item = items[index];
-        return ListTile(
-          title: Text(item.email),
-          subtitle: Text('${item.frecuenciaCardiaca}'),
-          onTap: (){
+  _AlertasNoAtendidasState createState() => _AlertasNoAtendidasState();
+}
 
-          },
-        );
-       },
-
-    );
-  }
-  
+class _AlertasNoAtendidasState extends State<AlertasNoAtendidas> {
+  List<Alertas> alertas = [];
+   @override
+   Widget build (BuildContext context){
+    return 
+   }
 }
 
 
@@ -102,10 +93,6 @@ class _PeopleTableState extends State<PeopleTable> {
         agresor: disponible.agresor,
         ));
     }
-    
-
-    
-      
     
     // Nos aseguramos de que usersFiltered esté sincronizado con users
     usersFiltered = _searchResult.isEmpty

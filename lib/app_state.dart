@@ -89,10 +89,10 @@ class ApplicationState extends ChangeNotifier {
               ),
             );
         }
-          } else {
-            // Si no hay documentos, inicializa _revisors con valores por defecto
-            _revisor = AllowedReview(usuarioRevisor: '', rol: '');
-          }
+        } else {
+          // Si no hay documentos, inicializa _revisors con valores por defecto
+          _revisor = AllowedReview(usuarioRevisor: '', rol: '');
+        }
         
         notifyListeners();
       });

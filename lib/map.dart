@@ -44,7 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
         pagina = PeopleTable(key: null,);
         
       case 1:
-        pagina = Lista();
+        pagina = AlertasNoAtendidas(key: null,);
         
       //case 2:
         //pagina = ThisMap(user.email);
@@ -105,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Correo: ${alerta.email}'),
+            //Text('Correo: ${alerta.email}'),
             //if (alerta.fechaHora != null)
               //Text(
                 //'Fecha: ${DateFormat('dd/MM/yyyy HH:mm').format(
